@@ -1,11 +1,11 @@
 import { playSound } from "./audio.js";
 import { createDeck, drawCard, getHandTotal, shuffleDeck } from "./deck.js";
 import {
+  flashDealButtonPlayAgain,
   renderHand,
   resetCards,
   setControlsDisabled,
   setDealButtonDefault,
-  setDealButtonPlayAgain,
   showBanner,
   updateCredits,
   updateCurrentBet,
@@ -122,12 +122,12 @@ function resetGame() {
 function endRound() {
   state.roundActive = false;
   state.hasStuck = false;
+  flashDealButtonPlayAgain();
   updateControls();
 }
 
 function checkZeroCredits() {
   if (state.playerCredit === 0) {
-    setDealButtonPlayAgain();
     playSound("lose");
     showBanner("You Lose!");
 
@@ -140,7 +140,6 @@ function checkZeroCredits() {
   }
 
   if (state.dealerCredit === 0) {
-    setDealButtonPlayAgain();
     playSound("blackjack");
     showBanner("You Win!");
 
@@ -278,6 +277,7 @@ export function deal() {
     return;
   }
 
+  setDealButtonDefault();
   state.roundActive = true;
   state.hasStuck = false;
   state.playerHand = [];

@@ -52,6 +52,16 @@ h2 {
   height: auto;
   border-radius: 5px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card-row img:not([src]) {
+  display: none;
+}
+
+.card-row img:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.65);
 }
 
 .score-chip {
@@ -199,6 +209,7 @@ h2 {
   background: #b02318;
   color: #fff;
   box-shadow: #6e1510 0px 6px 0px, rgba(0, 0, 0, 0.5) 0px 7px 6px;
+  transition: transform 0.1s, box-shadow 0.1s, opacity 0.22s ease;
 }
 
 .btn--deal:hover:not(:disabled) {
@@ -208,6 +219,11 @@ h2 {
 .btn--deal:active:not(:disabled) {
   transform: translateY(5px);
   box-shadow: #6e1510 0px 1px 0px, rgba(0, 0, 0, 0.5) 0px 2px 5px;
+}
+
+.btn--deal.btn--deal-fading,
+.btn--deal.btn--deal-fading:hover:not(:disabled) {
+  opacity: 0;
 }
 
 .btn:disabled {
@@ -238,3 +254,15 @@ h2 {
 .score-chip--warn      { border-color: #f5a623; color: #f5a623; }
 .score-chip--blackjack { border-color: #f5d060; color: #f5d060; box-shadow: 0 0 12px rgba(245, 208, 96, 0.6); }
 .score-chip--bust      { border-color: #ff5252; color: #ff5252; }
+
+/* ── Score chip pulse ── */
+
+@keyframes chip-pulse {
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.28); }
+  100% { transform: scale(1); }
+}
+
+.score-chip--pulse {
+  animation: chip-pulse 0.25s ease-out;
+}

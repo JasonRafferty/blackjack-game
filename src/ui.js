@@ -15,6 +15,10 @@ const elements = {
   stickButton: document.getElementById("stick"),
 };
 
+const DEAL_BUTTON_PLAY_AGAIN_DURATION = 1200;
+let dealButtonResetTimer;
+let dealButtonTransitionHandler;
+
 const cardSlots = {
   player: [
     document.getElementById("playerCardOne"),
@@ -28,6 +32,28 @@ const cardSlots = {
     document.getElementById("dealerCardThree"),
   ],
 };
+
+function clearDealButtonTimers() {
+  clearTimeout(dealButtonResetTimer);
+  if (dealButtonTransitionHandler) {
+    elements.dealButton.removeEventListener("transitionend", dealButtonTransitionHandler);
+    dealButtonTransitionHandler = null;
+  }
+}
+
+function applyDealButtonDefaultStyles() {
+  elements.dealButton.textContent = "Deal";
+  elements.dealButton.style.backgroundColor = "#b02318";
+  elements.dealButton.style.boxShadow = "#6e1510 0px 6px 0px, rgba(0,0,0,0.5) 0px 7px 6px";
+  elements.dealButton.style.color = "#fff";
+}
+
+function applyDealButtonPlayAgainStyles() {
+  elements.dealButton.textContent = "Play Again!";
+  elements.dealButton.style.backgroundColor = "#c8a227";
+  elements.dealButton.style.boxShadow = "#7a6010 0px 6px 0px, rgba(0,0,0,0.5) 0px 7px 6px";
+  elements.dealButton.style.color = "#1a0a00";
+}
 
 export function bindControls(handlers) {
   elements.dealButton.addEventListener("click", handlers.deal);
@@ -80,6 +106,12 @@ function setChipState(element, total) {
   else element.classList.add("score-chip--bust");
 }
 
+function pulseChip(element) {
+  element.classList.remove("score-chip--pulse");
+  void element.offsetWidth;
+  element.classList.add("score-chip--pulse");
+}
+
 export function updateTotals(playerTotal, dealerTotal) {
   elements.playerCardNumber.textContent = playerTotal ?? "-";
   elements.dealerCardNumber.textContent = dealerTotal ?? "-";
@@ -90,11 +122,13 @@ export function updateTotals(playerTotal, dealerTotal) {
 export function updatePlayerTotal(total) {
   elements.playerCardNumber.textContent = total;
   setChipState(elements.playerCardNumber, total);
+  pulseChip(elements.playerCardNumber);
 }
 
 export function updateDealerTotal(total) {
   elements.dealerCardNumber.textContent = total;
   setChipState(elements.dealerCardNumber, total);
+  pulseChip(elements.dealerCardNumber);
 }
 
 export function showBanner(message, resetAfter = 0) {
@@ -152,36 +186,55 @@ export function renderHand(owner, hand, options = {}) {
       slot.classList.remove("dealing");
       void slot.offsetWidth;
       slot.classList.add("dealing");
+      slot.addEventListener("animationend", () => slot.classList.remove("dealing"), { once: true });
     }
   });
 }
 
 export function resetCards() {
-  cardSlots.player.forEach((slot, index) => {
-    slot.src = index < 2 ? CARD_BACK : "";
-    slot.alt = index < 2 ? "logoCard" : "";
-    delete slot.dataset.renderedSrc;
-    slot.classList.remove("dealing");
-  });
-
-  cardSlots.dealer.forEach((slot, index) => {
-    slot.src = index < 2 ? CARD_BACK : "";
-    slot.alt = index < 2 ? "logoCard" : "";
-    delete slot.dataset.renderedSrc;
-    slot.classList.remove("dealing");
+  [cardSlots.player, cardSlots.dealer].forEach((slots) => {
+    slots.forEach((slot, index) => {
+      delete slot.dataset.renderedSrc;
+      slot.classList.remove("dealing");
+      if (index < 2) {
+        slot.src = CARD_BACK;
+        slot.alt = "logoCard";
+      } else {
+        slot.removeAttribute("src");
+        slot.alt = "";
+      }
+    });
   });
 }
 
 export function setDealButtonDefault() {
-  elements.dealButton.textContent = "Deal";
-  elements.dealButton.style.backgroundColor = "#b02318";
-  elements.dealButton.style.boxShadow = "#6e1510 0px 6px 0px, rgba(0,0,0,0.5) 0px 7px 6px";
-  elements.dealButton.style.color = "#fff";
+  clearDealButtonTimers();
+  elements.dealButton.classList.remove("btn--deal-fading");
+  applyDealButtonDefaultStyles();
 }
 
 export function setDealButtonPlayAgain() {
-  elements.dealButton.textContent = "Play Again!";
-  elements.dealButton.style.backgroundColor = "#c8a227";
-  elements.dealButton.style.boxShadow = "#7a6010 0px 6px 0px, rgba(0,0,0,0.5) 0px 7px 6px";
-  elements.dealButton.style.color = "#1a0a00";
+  clearDealButtonTimers();
+  elements.dealButton.classList.remove("btn--deal-fading");
+  applyDealButtonPlayAgainStyles();
+}
+
+export function flashDealButtonPlayAgain() {
+  setDealButtonPlayAgain();
+
+  dealButtonResetTimer = setTimeout(() => {
+    elements.dealButton.classList.add("btn--deal-fading");
+
+    dealButtonTransitionHandler = (e) => {
+      if (e.propertyName !== "opacity") return;
+      elements.dealButton.removeEventListener("transitionend", dealButtonTransitionHandler);
+      dealButtonTransitionHandler = null;
+      applyDealButtonDefaultStyles();
+      requestAnimationFrame(() => {
+        elements.dealButton.classList.remove("btn--deal-fading");
+      });
+    };
+
+    elements.dealButton.addEventListener("transitionend", dealButtonTransitionHandler);
+  }, DEAL_BUTTON_PLAY_AGAIN_DURATION);
 }
