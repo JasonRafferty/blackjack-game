@@ -4,60 +4,59 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blackjack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div>
-      <h1>Blackjack</h1>
-    </div>
-    <div class="cardContainerShared">
-      <div class="cardContainerPlayer">
-        <h2>Player</h2>
-        <div>
-          <img id="playerCardOne" src="/Images/logo.png" alt="logoCard" />
-        </div>
-        <div>
-          <img id="playerCardTwo" src="/Images/logo.png" alt="logoCard" />
-        </div>
-        <div>
-          <img id="playerCardThree" src="" alt="" />
-        </div>
-        <div>
-          <img id="playerCardFour" src="" alt="" />
-        </div>
+    <h1>Blackjack</h1>
+
+    <div class="zone zone--dealer">
+      <h2>Dealer</h2>
+      <div class="card-row">
+        <img id="dealerCardOne" src="/Images/logo.png" alt="logoCard" />
+        <img id="dealerCardTwo" src="/Images/logo.png" alt="logoCard" />
+        <img id="dealerCardThree" src="" alt="" />
       </div>
-      <div class="cardContainerDealer">
-        <h2>Dealer</h2>
-        <div>
-          <img id="dealerCardOne" src="/Images/logo.png" alt="logoCard" />
-        </div>
-        <div>
-          <img id="dealerCardTwo" src="/Images/logo.png" alt="logoCard" />
-        </div>
-        <div>
-          <img id="dealerCardThree" src="" alt="" />
-        </div>
+      <div class="score-chip" id="dealerCardNumberHTML">-</div>
+    </div>
+
+    <div class="table-center">
+      <div class="table-line"></div>
+      <p id="bannerHTML" class="banner" aria-live="polite"></p>
+      <div class="table-line"></div>
+    </div>
+
+    <div class="zone zone--player">
+      <div class="score-chip" id="playerCardNumberHTML">-</div>
+      <div class="card-row">
+        <img id="playerCardOne" src="/Images/logo.png" alt="logoCard" />
+        <img id="playerCardTwo" src="/Images/logo.png" alt="logoCard" />
+        <img id="playerCardThree" src="" alt="" />
+        <img id="playerCardFour" src="" alt="" />
+      </div>
+      <h2>Player</h2>
+    </div>
+
+    <div class="hud">
+      <span class="hud__pill" id="creditHTML">Player: £200</span>
+      <span class="hud__pill hud__pill--bet" id="currentBetHTML">Current Bet: £10</span>
+      <span class="hud__pill" id="creditDealerHTML">Dealer: £200</span>
+    </div>
+
+    <div class="controls">
+      <div class="controls__group">
+        <button id="lower" class="btn btn--secondary">&#x25BC; Lower</button>
+        <button id="raise" class="btn btn--secondary">&#x25B2; Raise</button>
+      </div>
+      <button id="deal" class="btn btn--deal">Deal</button>
+      <div class="controls__group">
+        <button id="hit" class="btn btn--primary">Hit</button>
+        <button id="stick" class="btn btn--primary">Stick</button>
       </div>
     </div>
-    <div class="cardCounter">
-      <p id="playerCardNumberHTML" class="cardCounterPlayer">-</p>
-      <p id="dealerCardNumberHTML" class="cardCounterDealer">-</p>
-    </div>
-    <div>
-      <p id="bannerHTML" class="banner">---</p>
-    </div>
-    <div>
-      <p class="moneyCounter" id="creditHTML">Player: £200</p>
-      <p class="moneyCounter" id="currentBetHTML">Current Bet: £10</p>
-      <p class="moneyCounter" id="creditDealerHTML">Dealer: £200</p>
-    </div>
-    <div>
-      <button id="deal">Deal</button>
-      <button id="hit">Hit</button>
-      <button id="stick">Stick</button>
-      <button id="raise">Raise</button>
-      <button id="lower">Lower</button>
-    </div>
+
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

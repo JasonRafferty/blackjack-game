@@ -67,25 +67,57 @@ export function updateDealerCredit(text) {
   elements.dealerCredit.textContent = text;
 }
 
+function setChipState(element, total) {
+  element.classList.remove("score-chip--safe", "score-chip--warn", "score-chip--blackjack", "score-chip--bust");
+  if (total == null) return;
+  if (total <= 14) element.classList.add("score-chip--safe");
+  else if (total <= 20) element.classList.add("score-chip--warn");
+  else if (total === 21) element.classList.add("score-chip--blackjack");
+  else element.classList.add("score-chip--bust");
+}
+
 export function updateTotals(playerTotal, dealerTotal) {
   elements.playerCardNumber.textContent = playerTotal ?? "-";
   elements.dealerCardNumber.textContent = dealerTotal ?? "-";
+  setChipState(elements.playerCardNumber, playerTotal);
+  setChipState(elements.dealerCardNumber, dealerTotal);
 }
 
 export function updatePlayerTotal(total) {
   elements.playerCardNumber.textContent = total;
+  setChipState(elements.playerCardNumber, total);
 }
 
 export function updateDealerTotal(total) {
   elements.dealerCardNumber.textContent = total;
+  setChipState(elements.dealerCardNumber, total);
 }
 
 export function showBanner(message, resetAfter = 0) {
+  if (message === "---") {
+    elements.banner.classList.remove("visible", "banner--win", "banner--lose", "banner--draw", "banner--warn");
+    return;
+  }
+
+  elements.banner.classList.remove("banner--win", "banner--lose", "banner--draw", "banner--warn");
+
+  const msg = message.toLowerCase();
+  if (msg.includes("win") || msg.includes("blackjack")) {
+    elements.banner.classList.add("banner--win");
+  } else if (msg.includes("lose")) {
+    elements.banner.classList.add("banner--lose");
+  } else if (msg.includes("draw")) {
+    elements.banner.classList.add("banner--draw");
+  } else if (msg.includes("insufficient") || msg.includes("funds")) {
+    elements.banner.classList.add("banner--warn");
+  }
+
   elements.banner.textContent = message;
+  elements.banner.classList.add("visible");
 
   if (resetAfter > 0) {
     setTimeout(() => {
-      elements.banner.textContent = "---";
+      elements.banner.classList.remove("visible");
     }, resetAfter);
   }
 }
@@ -109,8 +141,14 @@ export function renderHand(owner, hand, options = {}) {
       return;
     }
 
-    slot.src = card.image;
-    slot.alt = `${card.rank} of ${card.suit}`;
+    if (slot.dataset.renderedSrc !== card.image) {
+      slot.dataset.renderedSrc = card.image;
+      slot.src = card.image;
+      slot.alt = `${card.rank} of ${card.suit}`;
+      slot.classList.remove("dealing");
+      void slot.offsetWidth;
+      slot.classList.add("dealing");
+    }
   });
 }
 
@@ -118,26 +156,28 @@ export function resetCards() {
   cardSlots.player.forEach((slot, index) => {
     slot.src = index < 2 ? CARD_BACK : "";
     slot.alt = index < 2 ? "logoCard" : "";
+    delete slot.dataset.renderedSrc;
+    slot.classList.remove("dealing");
   });
 
   cardSlots.dealer.forEach((slot, index) => {
     slot.src = index < 2 ? CARD_BACK : "";
     slot.alt = index < 2 ? "logoCard" : "";
+    delete slot.dataset.renderedSrc;
+    slot.classList.remove("dealing");
   });
 }
 
 export function setDealButtonDefault() {
   elements.dealButton.textContent = "Deal";
-  elements.dealButton.style.backgroundColor = "rgb(231, 15, 15)";
-  elements.dealButton.style.boxShadow = "#a11907 0px 7px 2px, #000 0px 8px 5px";
-  elements.dealButton.style.color = "white";
-  elements.dealButton.style.fontWeight = "normal";
+  elements.dealButton.style.backgroundColor = "#b02318";
+  elements.dealButton.style.boxShadow = "#6e1510 0px 6px 0px, rgba(0,0,0,0.5) 0px 7px 6px";
+  elements.dealButton.style.color = "#fff";
 }
 
 export function setDealButtonPlayAgain() {
   elements.dealButton.textContent = "Play Again!";
-  elements.dealButton.style.backgroundColor = "#d79a1f";
-  elements.dealButton.style.boxShadow = "#79560f 0px 7px 2px, #000 0px 8px 5px";
-  elements.dealButton.style.color = "black";
-  elements.dealButton.style.fontWeight = "bold";
+  elements.dealButton.style.backgroundColor = "#c8a227";
+  elements.dealButton.style.boxShadow = "#7a6010 0px 6px 0px, rgba(0,0,0,0.5) 0px 7px 6px";
+  elements.dealButton.style.color = "#1a0a00";
 }
