@@ -26,107 +26,110 @@ let stickCounter = 0;
 //Initialise Card Images
 const playerCardOne = document.getElementById("playerCardOne");
 const playerCardTwo = document.getElementById("playerCardTwo");
+const playerCardThree = document.getElementById("playerCardThree");
+const playerCardFour = document.getElementById("playerCardFour");
 const dealerCardOne = document.getElementById("dealerCardOne");
 const dealerCardTwo = document.getElementById("dealerCardTwo");
+const dealerCardThree = document.getElementById("dealerCardThree");
 
 //Initialise Sound
-const click = new Audio("Sound/click.mp3");
-const win = new Audio("Sound/win.mp3");
-const lose = new Audio("Sound/lose.mp3");
-const no = new Audio("Sound/no.mp3");
-const blackjack = new Audio("Sound/blackjack.mp3");
+const click = new Audio("/Sound/click.mp3");
+const win = new Audio("/Sound/win.mp3");
+const lose = new Audio("/Sound/lose.mp3");
+const no = new Audio("/Sound/no.mp3");
+const blackjack = new Audio("/Sound/blackjack.mp3");
 
 //Initialise
 //Ace Array
 const aceCard = [
-  "Images/ace_of_clubs.png",
-  "Images/ace_of_diamonds.png",
-  "Images/ace_of_hearts.png",
-  "Images/ace_of_spades.png",
+  "/Images/ace_of_clubs.png",
+  "/Images/ace_of_diamonds.png",
+  "/Images/ace_of_hearts.png",
+  "/Images/ace_of_spades.png",
 ];
 //Two Array
 const twoCard = [
-  "Images/2_of_clubs.png",
-  "Images/2_of_diamonds.png",
-  "Images/2_of_hearts.png",
-  "Images/2_of_spades.png",
+  "/Images/2_of_clubs.png",
+  "/Images/2_of_diamonds.png",
+  "/Images/2_of_hearts.png",
+  "/Images/2_of_spades.png",
 ];
 //Three Array
 const threeCard = [
-  "Images/3_of_clubs.png",
-  "Images/3_of_diamonds.png",
-  "Images/3_of_hearts.png",
-  "Images/3_of_spades.png",
+  "/Images/3_of_clubs.png",
+  "/Images/3_of_diamonds.png",
+  "/Images/3_of_hearts.png",
+  "/Images/3_of_spades.png",
 ];
 //Four Array
 const fourCard = [
-  "Images/4_of_clubs.png",
-  "Images/4_of_diamonds.png",
-  "Images/4_of_hearts.png",
-  "Images/4_of_spades.png",
+  "/Images/4_of_clubs.png",
+  "/Images/4_of_diamonds.png",
+  "/Images/4_of_hearts.png",
+  "/Images/4_of_spades.png",
 ];
 //Five Array
 const fiveCard = [
-  "Images/5_of_clubs.png",
-  "Images/5_of_diamonds.png",
-  "Images/5_of_hearts.png",
-  "Images/5_of_spades.png",
+  "/Images/5_of_clubs.png",
+  "/Images/5_of_diamonds.png",
+  "/Images/5_of_hearts.png",
+  "/Images/5_of_spades.png",
 ];
 //Six Array
 const sixCard = [
-  "Images/6_of_clubs.png",
-  "Images/6_of_diamonds.png",
-  "Images/6_of_hearts.png",
-  "Images/6_of_spades.png",
+  "/Images/6_of_clubs.png",
+  "/Images/6_of_diamonds.png",
+  "/Images/6_of_hearts.png",
+  "/Images/6_of_spades.png",
 ];
 //Seven Array
 const sevenCard = [
-  "Images/7_of_clubs.png",
-  "Images/7_of_diamonds.png",
-  "Images/7_of_hearts.png",
-  "Images/7_of_spades.png",
+  "/Images/7_of_clubs.png",
+  "/Images/7_of_diamonds.png",
+  "/Images/7_of_hearts.png",
+  "/Images/7_of_spades.png",
 ];
 //Eight Array
 const eightCard = [
-  "Images/8_of_clubs.png",
-  "Images/8_of_diamonds.png",
-  "Images/8_of_hearts.png",
-  "Images/8_of_spades.png",
+  "/Images/8_of_clubs.png",
+  "/Images/8_of_diamonds.png",
+  "/Images/8_of_hearts.png",
+  "/Images/8_of_spades.png",
 ];
 //Nine Array
 const nineCard = [
-  "Images/9_of_clubs.png",
-  "Images/9_of_diamonds.png",
-  "Images/9_of_hearts.png",
-  "Images/9_of_spades.png",
+  "/Images/9_of_clubs.png",
+  "/Images/9_of_diamonds.png",
+  "/Images/9_of_hearts.png",
+  "/Images/9_of_spades.png",
 ];
 //Ten Array
 const tenCard = [
-  "Images/10_of_clubs.png",
-  "Images/10_of_diamonds.png",
-  "Images/10_of_hearts.png",
-  "Images/10_of_spades.png",
+  "/Images/10_of_clubs.png",
+  "/Images/10_of_diamonds.png",
+  "/Images/10_of_hearts.png",
+  "/Images/10_of_spades.png",
 ];
 //Jack Array
 const jackCard = [
-  "Images/jack_of_clubs.png",
-  "Images/jack_of_diamonds.png",
-  "Images/jack_of_hearts.png",
-  "Images/jack_of_spades.png",
+  "/Images/jack_of_clubs.png",
+  "/Images/jack_of_diamonds.png",
+  "/Images/jack_of_hearts.png",
+  "/Images/jack_of_spades.png",
 ];
 //Queen Array
 const queenCard = [
-  "Images/queen_of_clubs.png",
-  "Images/queen_of_diamonds.png",
-  "Images/queen_of_hearts.png",
-  "Images/queen_of_spades.png",
+  "/Images/queen_of_clubs.png",
+  "/Images/queen_of_diamonds.png",
+  "/Images/queen_of_hearts.png",
+  "/Images/queen_of_spades.png",
 ];
 //King Array
 const kingCard = [
-  "Images/king_of_clubs.png",
-  "Images/king_of_diamonds.png",
-  "Images/king_of_hearts.png",
-  "Images/king_of_spades.png",
+  "/Images/king_of_clubs.png",
+  "/Images/king_of_diamonds.png",
+  "/Images/king_of_hearts.png",
+  "/Images/king_of_spades.png",
 ];
 
 //Raises currentBet by £10
@@ -529,7 +532,7 @@ function deal() {
   //Reset cards
   playerCardThree.src = "";
   playerCardFour.src = "";
-  dealerCardTwo.src = "Images/logo.png";
+  dealerCardTwo.src = "/Images/logo.png";
   dealerCardThree.src = "";
 
   //Checks if zero credits
@@ -758,12 +761,12 @@ function playerZeroCredits() {
     dealButton.style.color = "black";
     dealButton.style.fontWeight = "bold";
     //Reset Cards
-    playerCardOne.src = "Images/logo.png";
-    playerCardTwo.src = "Images/logo.png";
+    playerCardOne.src = "/Images/logo.png";
+    playerCardTwo.src = "/Images/logo.png";
     playerCardThree.src = "";
     playerCardFour.src = "";
-    dealerCardOne.src = "Images/logo.png";
-    dealerCardTwo.src = "Images/logo.png";
+    dealerCardOne.src = "/Images/logo.png";
+    dealerCardTwo.src = "/Images/logo.png";
     dealerCardThree.src = "";
     //Reset card number
     playerCardNumber.textContent = "-";
@@ -789,18 +792,24 @@ function dealerZeroCredits() {
     dealButton.style.color = "black";
     dealButton.style.fontWeight = "bold";
     //Reset Cards
-    playerCardOne.src = "Images/logo.png";
-    playerCardTwo.src = "Images/logo.png";
+    playerCardOne.src = "/Images/logo.png";
+    playerCardTwo.src = "/Images/logo.png";
     playerCardThree.src = "";
     playerCardFour.src = "";
-    dealerCardOne.src = "Images/logo.png";
-    dealerCardTwo.src = "Images/logo.png";
+    dealerCardOne.src = "/Images/logo.png";
+    dealerCardTwo.src = "/Images/logo.png";
     dealerCardThree.src = "";
     //Reset card number
     playerCardNumber.textContent = "-";
     dealerCardNumber.textContent = "-";
   }
 }
+
+dealButton.addEventListener("click", dealButtonHandler);
+document.getElementById("hit").addEventListener("click", hit);
+document.getElementById("stick").addEventListener("click", stick);
+document.getElementById("raise").addEventListener("click", raise);
+document.getElementById("lower").addEventListener("click", lower);
 
 //Future
 //1. Let dealer deal four cards
