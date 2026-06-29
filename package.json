@@ -1,8 +1,8 @@
 {
   "name": "blackjack-game",
   "version": "1.0.0",
-  "description": "Having gained experience in Java, I was eager to advance my programming skills by exploring a new programming language 🚀🌟. Consequently, I embarked on a project to create a blackjack game using HTML, CSS, and JavaScript, as it provided a substantial challenge that required all three of these technologies. The initial stages of working with CSS were challenging, especially when it came to aligning the cards and counters on the user interface. 😅 However, as I persisted, I began to grasp the intricacies of CSS and improve my design skills. 🎨💪",
-  "main": "code.js",
+  "description": "A browser-based blackjack game built with HTML, CSS, and JavaScript.",
+  "main": "src/main.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
