@@ -1,7 +1,7 @@
 const suits = ["clubs", "diamonds", "hearts", "spades"];
 
 const ranks = [
-  { name: "ace", value: 1 },
+  { name: "ace", value: 11 },
   { name: "2", value: 2 },
   { name: "3", value: 3 },
   { name: "4", value: 4 },
@@ -16,22 +16,43 @@ const ranks = [
   { name: "king", value: 10 },
 ];
 
-function randomItem(items) {
-  return items[Math.floor(Math.random() * items.length)];
+export function createDeck() {
+  return suits.flatMap((suit) =>
+    ranks.map((rank) => ({
+      rank: rank.name,
+      suit,
+      value: rank.value,
+      image: `/Images/${rank.name}_of_${suit}.png`,
+    }))
+  );
 }
 
-export function drawCard() {
-  const rank = randomItem(ranks);
-  const suit = randomItem(suits);
+export function shuffleDeck(deck) {
+  const shuffled = [...deck];
 
-  return {
-    rank: rank.name,
-    suit,
-    value: rank.value,
-    image: `/Images/${rank.name}_of_${suit}.png`,
-  };
+  for (let index = shuffled.length - 1; index > 0; index--) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[randomIndex]] = [
+      shuffled[randomIndex],
+      shuffled[index],
+    ];
+  }
+
+  return shuffled;
+}
+
+export function drawCard(deck) {
+  return deck.pop();
 }
 
 export function getHandTotal(hand) {
-  return hand.reduce((total, card) => total + card.value, 0);
+  let total = hand.reduce((score, card) => score + card.value, 0);
+  let aces = hand.filter((card) => card.rank === "ace").length;
+
+  while (total > 21 && aces > 0) {
+    total -= 10;
+    aces--;
+  }
+
+  return total;
 }

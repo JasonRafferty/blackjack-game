@@ -6,8 +6,12 @@ const elements = {
   dealButton: document.getElementById("deal"),
   dealerCardNumber: document.getElementById("dealerCardNumberHTML"),
   dealerCredit: document.getElementById("creditDealerHTML"),
+  hitButton: document.getElementById("hit"),
+  lowerButton: document.getElementById("lower"),
   playerCardNumber: document.getElementById("playerCardNumberHTML"),
   playerCredit: document.getElementById("creditHTML"),
+  raiseButton: document.getElementById("raise"),
+  stickButton: document.getElementById("stick"),
 };
 
 const cardSlots = {
@@ -26,10 +30,24 @@ const cardSlots = {
 
 export function bindControls(handlers) {
   elements.dealButton.addEventListener("click", handlers.deal);
-  document.getElementById("hit").addEventListener("click", handlers.hit);
-  document.getElementById("stick").addEventListener("click", handlers.stick);
-  document.getElementById("raise").addEventListener("click", handlers.raise);
-  document.getElementById("lower").addEventListener("click", handlers.lower);
+  elements.hitButton.addEventListener("click", handlers.hit);
+  elements.stickButton.addEventListener("click", handlers.stick);
+  elements.raiseButton.addEventListener("click", handlers.raise);
+  elements.lowerButton.addEventListener("click", handlers.lower);
+}
+
+export function setControlsDisabled({
+  deal = false,
+  hit = false,
+  lower = false,
+  raise = false,
+  stick = false,
+}) {
+  elements.dealButton.disabled = deal;
+  elements.hitButton.disabled = hit;
+  elements.lowerButton.disabled = lower;
+  elements.raiseButton.disabled = raise;
+  elements.stickButton.disabled = stick;
 }
 
 export function updateCurrentBet(amount) {

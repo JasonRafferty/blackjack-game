@@ -1,8 +1,9 @@
 import { playSound } from "./audio.js";
-import { drawCard, getHandTotal } from "./deck.js";
+import { createDeck, drawCard, getHandTotal, shuffleDeck } from "./deck.js";
 import {
   renderHand,
   resetCards,
+  setControlsDisabled,
   setDealButtonDefault,
   setDealButtonPlayAgain,
   showBanner,
@@ -17,9 +18,13 @@ import {
 
 const STARTING_CREDIT = 200;
 const MINIMUM_BET = 10;
+const DEALER_STAND_TOTAL = 17;
+const MAX_DEALER_CARDS = 3;
+const MAX_PLAYER_CARDS = 4;
 
 const state = {
   currentBet: MINIMUM_BET,
+  deck: [],
   dealerCredit: STARTING_CREDIT,
   dealerHand: [],
   dealerTotal: 0,
@@ -30,12 +35,48 @@ const state = {
   roundActive: false,
 };
 
+function isGameOver() {
+  return state.playerCredit === 0 || state.dealerCredit === 0;
+}
+
+function canRaiseBet() {
+  return (
+    !state.roundActive &&
+    state.currentBet < state.playerCredit &&
+    state.currentBet < state.dealerCredit &&
+    !isGameOver()
+  );
+}
+
+function canLowerBet() {
+  return !state.roundActive && state.currentBet > MINIMUM_BET && !isGameOver();
+}
+
+function updateControls() {
+  const playerCanAct =
+    state.roundActive &&
+    !state.hasStuck &&
+    state.playerTotal < 21 &&
+    state.playerHand.length < MAX_PLAYER_CARDS;
+  const canStick = state.roundActive && !state.hasStuck;
+
+  setControlsDisabled({
+    deal: state.roundActive,
+    hit: !playerCanAct,
+    lower: !canLowerBet(),
+    raise: !canRaiseBet(),
+    stick: !canStick,
+  });
+}
+
 function refreshMoney() {
   updateCredits(state.playerCredit, state.dealerCredit);
   updateCurrentBet(state.currentBet);
+  updateControls();
 }
 
 function resetRound() {
+  state.deck = [];
   state.dealerHand = [];
   state.dealerTotal = 0;
   state.hasStuck = false;
@@ -44,6 +85,7 @@ function resetRound() {
   state.roundActive = false;
   resetCards();
   updateTotals(null, null);
+  updateControls();
 }
 
 function resetGame() {
@@ -60,10 +102,13 @@ function resetGame() {
   }, 1000);
 
   setDealButtonDefault();
+  updateControls();
 }
 
 function endRound() {
   state.roundActive = false;
+  state.hasStuck = false;
+  updateControls();
 }
 
 function checkZeroCredits() {
@@ -76,6 +121,7 @@ function checkZeroCredits() {
     setTimeout(() => showBanner("---"), 2000);
 
     resetRound();
+    updateControls();
     return;
   }
 
@@ -88,6 +134,7 @@ function checkZeroCredits() {
     setTimeout(() => showBanner("---"), 2000);
 
     resetRound();
+    updateControls();
   }
 }
 
@@ -155,41 +202,56 @@ function checkWinner() {
 }
 
 function drawPlayerCard() {
-  state.playerHand.push(drawCard());
+  state.playerHand.push(drawCard(state.deck));
   state.playerTotal = getHandTotal(state.playerHand);
   renderHand("player", state.playerHand);
   updatePlayerTotal(state.playerTotal);
+  updateControls();
 }
 
 function drawDealerCard() {
-  state.dealerHand.push(drawCard());
+  state.dealerHand.push(drawCard(state.deck));
   state.dealerTotal = getHandTotal(state.dealerHand);
   renderHand("dealer", state.dealerHand);
   updateDealerTotal(state.dealerTotal);
+  updateControls();
 }
 
-function dealerHit() {
+function playDealerTurn() {
   setTimeout(() => {
-    drawDealerCard();
+    if (
+      state.dealerTotal < DEALER_STAND_TOTAL &&
+      state.dealerHand.length < MAX_DEALER_CARDS
+    ) {
+      drawDealerCard();
+      playDealerTurn();
+      return;
+    }
+
     checkWinner();
   }, 1200);
 }
 
 export function raise() {
-  if (
-    state.currentBet < state.playerCredit &&
-    state.currentBet < state.dealerCredit
-  ) {
-    state.currentBet += 10;
-    updateCurrentBet(state.currentBet);
+  if (!canRaiseBet()) {
+    playSound("no");
+    return;
   }
+
+  state.currentBet += 10;
+  updateCurrentBet(state.currentBet);
+  updateControls();
 }
 
 export function lower() {
-  if (state.currentBet > MINIMUM_BET) {
-    state.currentBet -= 10;
-    updateCurrentBet(state.currentBet);
+  if (!canLowerBet()) {
+    playSound("no");
+    return;
   }
+
+  state.currentBet -= 10;
+  updateCurrentBet(state.currentBet);
+  updateControls();
 }
 
 export function deal() {
@@ -204,6 +266,7 @@ export function deal() {
   state.dealerHand = [];
   state.playerTotal = 0;
   state.dealerTotal = 0;
+  state.deck = shuffleDeck(createDeck());
 
   showBanner("---");
   resetCards();
@@ -213,16 +276,23 @@ export function deal() {
   checkBust();
 
   drawDealerCard();
+  state.dealerHand.push(drawCard(state.deck));
+  state.dealerTotal = getHandTotal(state.dealerHand);
   renderHand("dealer", state.dealerHand, { hiddenIndexes: [1] });
 
   state.playerCredit -= state.currentBet;
   updateCredits(state.playerCredit, state.dealerCredit);
 
-  checkZeroCredits();
+  updateControls();
 }
 
 export function hit() {
-  if (!state.roundActive || state.playerTotal >= 21 || state.playerHand.length >= 4) {
+  if (
+    !state.roundActive ||
+    state.hasStuck ||
+    state.playerTotal >= 21 ||
+    state.playerHand.length >= MAX_PLAYER_CARDS
+  ) {
     playSound("no");
     return;
   }
@@ -238,10 +308,15 @@ export function stick() {
   }
 
   state.hasStuck = true;
-  drawDealerCard();
+  renderHand("dealer", state.dealerHand);
+  updateDealerTotal(state.dealerTotal);
+  updateControls();
 
-  if (state.dealerTotal <= 15) {
-    dealerHit();
+  if (
+    state.dealerTotal < DEALER_STAND_TOTAL &&
+    state.dealerHand.length < MAX_DEALER_CARDS
+  ) {
+    playDealerTurn();
     return;
   }
 
@@ -258,3 +333,4 @@ export function dealButtonHandler() {
 }
 
 refreshMoney();
+resetRound();
