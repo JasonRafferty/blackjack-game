@@ -1,4 +1,4 @@
-const CARD_BACK = "/Images/logo.png";
+const CARD_BACK = `${import.meta.env.BASE_URL}Images/logo.png`;
 
 const elements = {
   banner: document.getElementById("bannerHTML"),
@@ -6,6 +6,7 @@ const elements = {
   dealButton: document.getElementById("deal"),
   dealerCardNumber: document.getElementById("dealerCardNumberHTML"),
   dealerCredit: document.getElementById("creditDealerHTML"),
+  doubleButton: document.getElementById("double"),
   hitButton: document.getElementById("hit"),
   lowerButton: document.getElementById("lower"),
   playerCardNumber: document.getElementById("playerCardNumberHTML"),
@@ -30,6 +31,7 @@ const cardSlots = {
 
 export function bindControls(handlers) {
   elements.dealButton.addEventListener("click", handlers.deal);
+  elements.doubleButton.addEventListener("click", handlers.double);
   elements.hitButton.addEventListener("click", handlers.hit);
   elements.stickButton.addEventListener("click", handlers.stick);
   elements.raiseButton.addEventListener("click", handlers.raise);
@@ -38,12 +40,14 @@ export function bindControls(handlers) {
 
 export function setControlsDisabled({
   deal = false,
+  double = false,
   hit = false,
   lower = false,
   raise = false,
   stick = false,
 }) {
   elements.dealButton.disabled = deal;
+  elements.doubleButton.disabled = double;
   elements.hitButton.disabled = hit;
   elements.lowerButton.disabled = lower;
   elements.raiseButton.disabled = raise;

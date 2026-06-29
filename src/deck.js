@@ -22,7 +22,7 @@ export function createDeck() {
       rank: rank.name,
       suit,
       value: rank.value,
-      image: `/Images/${rank.name}_of_${suit}.png`,
+      image: `${import.meta.env.BASE_URL}Images/${rank.name}_of_${suit}.png`,
     }))
   );
 }

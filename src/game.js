@@ -29,6 +29,7 @@ const state = {
   dealerHand: [],
   dealerTotal: 0,
   hasStuck: false,
+  isNaturalBlackjack: false,
   playerCredit: STARTING_CREDIT,
   playerHand: [],
   playerTotal: 0,
@@ -52,6 +53,17 @@ function canLowerBet() {
   return !state.roundActive && state.currentBet > MINIMUM_BET && !isGameOver();
 }
 
+function canDouble() {
+  return (
+    state.roundActive &&
+    !state.hasStuck &&
+    state.playerHand.length === 2 &&
+    state.playerTotal < 21 &&
+    state.playerCredit >= state.currentBet &&
+    !isGameOver()
+  );
+}
+
 function updateControls() {
   const playerCanAct =
     state.roundActive &&
@@ -62,6 +74,7 @@ function updateControls() {
 
   setControlsDisabled({
     deal: state.roundActive,
+    double: !canDouble(),
     hit: !playerCanAct,
     lower: !canLowerBet(),
     raise: !canRaiseBet(),
@@ -80,6 +93,7 @@ function resetRound() {
   state.dealerHand = [];
   state.dealerTotal = 0;
   state.hasStuck = false;
+  state.isNaturalBlackjack = false;
   state.playerHand = [];
   state.playerTotal = 0;
   state.roundActive = false;
@@ -139,15 +153,19 @@ function checkZeroCredits() {
 }
 
 function playerWins() {
-  state.playerCredit += state.currentBet * 2;
-  state.dealerCredit -= state.currentBet;
+  const winAmount = state.isNaturalBlackjack
+    ? Math.floor(state.currentBet * 1.5)
+    : state.currentBet;
 
-  updatePlayerCredit(`+ £${state.currentBet}`);
-  updateDealerCredit(`- £${state.currentBet}`);
+  state.playerCredit += state.currentBet + winAmount;
+  state.dealerCredit -= winAmount;
+
+  updatePlayerCredit(`+ £${winAmount}`);
+  updateDealerCredit(`- £${winAmount}`);
 
   setTimeout(refreshMoney, 1500);
   playSound("win");
-  showBanner("You Win!", 1600);
+  showBanner(state.isNaturalBlackjack ? "Blackjack! 3:2!" : "You Win!", 1600);
   endRound();
   checkZeroCredits();
 }
@@ -273,6 +291,7 @@ export function deal() {
 
   drawPlayerCard();
   drawPlayerCard();
+  state.isNaturalBlackjack = state.playerTotal === 21;
   checkBust();
 
   drawDealerCard();
@@ -301,12 +320,7 @@ export function hit() {
   checkBust();
 }
 
-export function stick() {
-  if (!state.roundActive || state.hasStuck) {
-    playSound("no");
-    return;
-  }
-
+function executeStick() {
   state.hasStuck = true;
   renderHand("dealer", state.dealerHand);
   updateDealerTotal(state.dealerTotal);
@@ -321,6 +335,33 @@ export function stick() {
   }
 
   setTimeout(checkWinner, 1500);
+}
+
+export function stick() {
+  if (!state.roundActive || state.hasStuck) {
+    playSound("no");
+    return;
+  }
+  executeStick();
+}
+
+export function doubleDown() {
+  if (!canDouble()) {
+    playSound("no");
+    return;
+  }
+
+  state.playerCredit -= state.currentBet;
+  state.currentBet *= 2;
+  updateCredits(state.playerCredit, state.dealerCredit);
+  updateCurrentBet(state.currentBet);
+
+  drawPlayerCard();
+  checkBust();
+
+  if (state.playerTotal <= 21) {
+    executeStick();
+  }
 }
 
 export function dealButtonHandler() {
